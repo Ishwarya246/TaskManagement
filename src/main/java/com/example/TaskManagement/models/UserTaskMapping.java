@@ -18,10 +18,12 @@ public class UserTaskMapping {
     private Long id;
     private Long userId;
     private Long taskId;
+    private Long assigneeId;
 
     public UserTaskMapping() {}
-    public UserTaskMapping(Long taskId, Long userId) {
+    public UserTaskMapping(Long userId , Long assigneeId, Long taskId) {
         this.taskId = taskId;
         this.userId = userId;
+        this.assigneeId = assigneeId;
     }
 }

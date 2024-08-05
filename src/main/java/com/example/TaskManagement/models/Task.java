@@ -15,7 +15,7 @@ public class Task {
 
     @Id
     @GeneratedValue
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", initialValue = 1, allocationSize = 1)
+    @SequenceGenerator(name = "task_seq", sequenceName = "task_sequence", initialValue = 1, allocationSize = 1)
     private Long id;
 
     private String title;
@@ -27,7 +27,7 @@ public class Task {
 
     public Task() {}
 
-    public Task(String title, String description, int priority,LocalDate startDate, LocalDate dueDate,  String status) {
+    public Task(String title, String description,LocalDate startDate, LocalDate dueDate,  String status,  int priority) {
         this.title = title;
         this.description = description;
         this.priority = priority;
