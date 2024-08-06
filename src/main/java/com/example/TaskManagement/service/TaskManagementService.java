@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -147,6 +150,29 @@ public class TaskManagementService {
         userTaskMapping1.setAssigneeId(assigneeId);
         userTaskMappingRepository.save(userTaskMapping1);
         return new Response("Updated Successfully" , true);
+    }
+
+
+    public static Response fetchUserTasks(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return new Response("User Not Present" , true);
+        }
+        List<UserTaskMapping> userTasks = userTaskMappingRepository.findAllByAssigneeId(userId);
+
+        HashMap<Integer , List<Task>> userTaskHashMap = new HashMap<>();
+        userTaskHashMap.put(0, new ArrayList<Task>() );
+        userTaskHashMap.put(1, new ArrayList<Task>() );
+        userTaskHashMap.put(2, new ArrayList<Task>() );
+        for (UserTaskMapping userTaskMapping : userTasks) {
+            Task task = taskRepository.findById(userTaskMapping.getTaskId()).get();
+            List<Task> list1 = userTaskHashMap.get(task.getPriority());
+            System.out.println("....... " + task);
+            list1.add(task);
+            userTaskHashMap.put(task.getPriority(), list1);
+        }
+        System.out.println(userTaskHashMap);
+        return new Response("Fetched Successfully" , true);
     }
 
 }

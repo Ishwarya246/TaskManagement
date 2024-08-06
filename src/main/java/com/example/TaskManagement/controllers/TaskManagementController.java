@@ -82,5 +82,10 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/fetch_user_task")
+    public ResponseEntity<Response> fetchUserTasks(@RequestParam("userId") Long userId) {
+        Response response = TaskManagementService.fetchUserTasks(userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     }
