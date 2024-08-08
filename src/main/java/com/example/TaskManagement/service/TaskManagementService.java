@@ -1,10 +1,7 @@
 package com.example.TaskManagement.service;
 
 import com.example.TaskManagement.dto.Response;
-import com.example.TaskManagement.models.Tag;
-import com.example.TaskManagement.models.Task;
-import com.example.TaskManagement.models.User;
-import com.example.TaskManagement.models.UserTaskMapping;
+import com.example.TaskManagement.models.*;
 import com.example.TaskManagement.repositories.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,6 +250,58 @@ public class TaskManagementService {
         return new Response("Deleted Successfully" , true);
     }
 
+    public static Response addComment(Long taskId, String comment, Long userId) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return new Response("User Not Present" , true);
+        }
+        Optional<Comment> isCommentPresent = commentRepository.findByTaskIdAndCommentAndUserId(taskId, comment, userId);
+        if (isCommentPresent.isPresent()) {
+            return new Response("Comment Already Present" , true);
+        }
+        Comment com = new Comment(userId, taskId, comment);
+        commentRepository.save(com);
+        return new Response("Added Successfully" , true);
+    }
 
+    public static Response deleteComment(Long commentId) {
+        Optional<Comment> comment = commentRepository.findById(commentId);
+        if (comment.isEmpty()) {
+            return new Response("Comment Not Present" , true);
+        }
+        commentRepository.delete(comment.get());
+        return new Response("Deleted Successfully" , true);
+    }
+
+    public static Response updateComment(Long taskId, Long commentId, Long userId, String commentMessage) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Comment comment = commentRepository.findByIdAndTaskIdAndUserId(commentId,taskId, userId);
+        if (comment == null) {
+            return new Response("Comment Not Present" , true);
+        }
+
+        Comment com = new Comment();
+        com.setComment(commentMessage);
+        commentRepository.save(com);
+        return new Response("Updated Successfully" , true);
+    }
+
+    public static List<Comment> fetchComments(Long taskId) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        List<Comment> comments = new ArrayList<>();
+        if (task.isEmpty()) {
+            return comments;
+        }
+
+
+        return comments;
+    }
 
 }

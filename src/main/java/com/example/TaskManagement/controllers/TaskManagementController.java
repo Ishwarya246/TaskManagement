@@ -1,6 +1,7 @@
 package com.example.TaskManagement.controllers;
 
 import com.example.TaskManagement.dto.Response;
+import com.example.TaskManagement.models.Comment;
 import com.example.TaskManagement.models.Tag;
 import com.example.TaskManagement.models.Task;
 import com.example.TaskManagement.models.User;
@@ -123,6 +124,30 @@ public class TaskManagementController {
     @DeleteMapping("/delete_tag/{task_id}")
     public ResponseEntity<Response> deleteTag(@PathVariable("task_id") Long taskId) {
         Response response = TaskManagementService.deleteTags(taskId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/add_comment")
+    public ResponseEntity<Response> addComment (@RequestParam("taskId") Long taskId, @RequestParam("comment") String comment, @RequestParam("userId") Long userId) {
+        Response response = TaskManagementService.addComment(taskId, comment, userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/update_comment")
+    public ResponseEntity<Response> updateComment(@RequestParam("taskId") Long taskId, @RequestParam("commentId") Long commentId, @RequestParam("userId") Long userId, @RequestParam("newComment") String commentMessage) {
+        Response response = TaskManagementService.updateComment(taskId, commentId, userId, commentMessage);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete_comment/{commentId}")
+    public ResponseEntity<Response> deleteComment( @PathVariable("commentId") Long commentId) {
+        Response response = TaskManagementService.deleteComment(commentId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("fetch_comments/{taskId}")
+    public ResponseEntity<List<Comment>> fetchComments(@PathVariable("taskId") Long taskId) {
+        List<Comment> response = TaskManagementService.fetchComments(taskId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
