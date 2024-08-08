@@ -1,12 +1,12 @@
 package com.example.TaskManagement.service;
 
 import com.example.TaskManagement.dto.Response;
+import com.example.TaskManagement.models.Tag;
 import com.example.TaskManagement.models.Task;
 import com.example.TaskManagement.models.User;
 import com.example.TaskManagement.models.UserTaskMapping;
-import com.example.TaskManagement.repositories.TaskRepository;
-import com.example.TaskManagement.repositories.UserRepository;
-import com.example.TaskManagement.repositories.UserTaskMappingRepository;
+import com.example.TaskManagement.repositories.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,16 @@ public class TaskManagementService {
     public static UserRepository userRepository = null;
     public static TaskRepository taskRepository = null;
     public static UserTaskMappingRepository userTaskMappingRepository = null;
+    public static TagRepository tagRepository = null;
+    public static CommentRepository commentRepository = null;
 
     @Autowired
-    public TaskManagementService(UserRepository userRepository, TaskRepository taskRepository, UserTaskMappingRepository userTaskMappingRepository) {
+    public TaskManagementService(UserRepository userRepository, TaskRepository taskRepository, UserTaskMappingRepository userTaskMappingRepository, TagRepository tagRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
         this.userTaskMappingRepository = userTaskMappingRepository;
+        this.tagRepository = tagRepository;
+        this.commentRepository = commentRepository;
     }
 
     public static Response addUser(String name, String email, String password) {
@@ -152,11 +156,11 @@ public class TaskManagementService {
         return new Response("Updated Successfully" , true);
     }
 
-
-    public static Response fetchUserTasks(Long userId) {
+     public static List<Task> fetchUserTasks(Long userId) {
         Optional<User> user = userRepository.findById(userId);
+        List<Task> tasks = new ArrayList<Task>();
         if (user.isEmpty()) {
-            return new Response("User Not Present" , true);
+            return tasks;
         }
         List<UserTaskMapping> userTasks = userTaskMappingRepository.findAllByAssigneeId(userId);
 
@@ -167,12 +171,79 @@ public class TaskManagementService {
         for (UserTaskMapping userTaskMapping : userTasks) {
             Task task = taskRepository.findById(userTaskMapping.getTaskId()).get();
             List<Task> list1 = userTaskHashMap.get(task.getPriority());
-            System.out.println("....... " + task);
             list1.add(task);
             userTaskHashMap.put(task.getPriority(), list1);
         }
-        System.out.println(userTaskHashMap);
-        return new Response("Fetched Successfully" , true);
+
+        for (Integer priority : userTaskHashMap.keySet()) {
+            tasks.addAll(userTaskHashMap.get(priority));
+        }
+        return tasks;
     }
+
+    public static Response updateStatus(Long taskId, String status) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Task newTask = task.get();
+        newTask.setStatus(status);
+        taskRepository.save(newTask);
+        return new Response("Updated Successfully" , true);
+    }
+
+    public static Response updatePriority(Long taskId, Integer priority) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Task newTask = task.get();
+        newTask.setPriority(priority);
+        taskRepository.save(newTask);
+        return new Response("Updated Successfully" , true);
+    }
+
+    public static Response addTag(Long taskId, String tagName) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Optional<Tag> tagPresent = tagRepository.findByTaskIdAndTagName(taskId, tagName);
+        if (tagPresent.isPresent()) {
+            return new Response("Tag Already Present" , true);
+        }
+        Tag newTag = new Tag(tagName, taskId);
+        tagRepository.save(newTag);
+        return new Response("Added Successfully" , true);
+    }
+
+    public static Response deleteTag(Long taskId, String tagName) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if (task.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        Optional<Tag> tagPresent = tagRepository.findByTaskIdAndTagName(taskId, tagName);
+        if (tagPresent.isPresent()) {
+            tagRepository.delete(tagPresent.get());
+            return new Response("Deleted Successfully" , true);
+        }
+        return new Response("Tag Not Present" , true);
+    }
+
+    public static List<String> fetchTags(Long taskId) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        List<String> tag = new ArrayList<String>();
+        if (task.isEmpty()) {
+            return tag;
+        }
+        Optional<List<Tag>> tags = tagRepository.findAllByTaskId(taskId);
+
+        for (Tag tag1 : tags.get()) {
+            tag.add(tag1.getTagName());
+        }
+        return tag;
+    }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.example.TaskManagement.controllers;
 
 import com.example.TaskManagement.dto.Response;
+import com.example.TaskManagement.models.Tag;
 import com.example.TaskManagement.models.Task;
 import com.example.TaskManagement.models.User;
 import com.example.TaskManagement.service.TaskManagementService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class TaskManagementController {
@@ -83,9 +85,40 @@ public class TaskManagementController {
     }
 
     @GetMapping("/fetch_user_task")
-    public ResponseEntity<Response> fetchUserTasks(@RequestParam("userId") Long userId) {
-        Response response = TaskManagementService.fetchUserTasks(userId);
+    public ResponseEntity<List<Task>> fetchUserTasks(@RequestParam("userId") Long userId) {
+        List<Task> response = TaskManagementService.fetchUserTasks(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PutMapping("/update_status/{task_id}")
+    public ResponseEntity<Response> updateStatus(@RequestParam("status") String status, @PathVariable("task_id") Long taskId) {
+        Response response = TaskManagementService.updateStatus(taskId, status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PutMapping("/change_priority/{task_id}")
+    public ResponseEntity<Response> updatePriority(@RequestParam("priority") Integer priority, @PathVariable("task_id") Long taskId) {
+        Response response = TaskManagementService.updatePriority(taskId, priority);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/add_tag")
+    public ResponseEntity<Response> addTag(@RequestParam("taskId") Long taskId, @RequestParam("tagName") String tagName) {
+        Response response = TaskManagementService.addTag(taskId, tagName);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/fetch_tags")
+    public ResponseEntity<List<String>> fetchTags(@RequestParam("taskId") Long taskId) {
+        List<String> response = TaskManagementService.fetchTags(taskId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete_tag/{task_id}")
+    public ResponseEntity<Response> deleteTag(@RequestParam("tagName") String tagName, @PathVariable("task_id") Long taskId) {
+        Response response = TaskManagementService.deleteTag(taskId, tagName);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+}
