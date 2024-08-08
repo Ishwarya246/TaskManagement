@@ -120,5 +120,10 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete_tag/{task_id}")
+    public ResponseEntity<Response> deleteTag(@PathVariable("task_id") Long taskId) {
+        Response response = TaskManagementService.deleteTags(taskId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

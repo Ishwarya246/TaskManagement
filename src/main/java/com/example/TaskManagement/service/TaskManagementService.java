@@ -244,6 +244,15 @@ public class TaskManagementService {
         return tag;
     }
 
+    public static Response deleteTags(Long taskId) {
+        Optional<List<Tag>> tags = tagRepository.findAllByTaskId(taskId);
+        if (tags.isEmpty()) {
+            return new Response("Task Not Present" , true);
+        }
+        tagRepository.deleteAll(tags.get());
+        return new Response("Deleted Successfully" , true);
+    }
+
 
 
 }
