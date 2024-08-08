@@ -295,11 +295,10 @@ public class TaskManagementService {
 
     public static List<Comment> fetchComments(Long taskId) {
         Optional<Task> task = taskRepository.findById(taskId);
-        List<Comment> comments = new ArrayList<>();
         if (task.isEmpty()) {
-            return comments;
+            return new ArrayList<>();
         }
-
+        List<Comment> comments = commentRepository.findAllByTaskId(taskId);
 
         return comments;
     }
