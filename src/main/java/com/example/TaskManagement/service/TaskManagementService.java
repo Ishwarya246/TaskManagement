@@ -128,6 +128,15 @@ public class TaskManagementService {
         if (userTaskMapping != null) {
             userTaskMappingRepository.deleteAll(userTaskMapping);
         }
+        Optional<List<Tag>> tag = tagRepository.findAllByTaskId(taskId);
+        if (tag.isPresent()) {
+            tagRepository.deleteAll(tag.get());
+        }
+        List<Comment> comment = commentRepository.findAllByTaskId(taskId);
+        if (comment != null) {
+            commentRepository.deleteAll(comment);
+        }
+
         taskRepository.delete(task.get());
         return new Response("Deleted Successfully" , true);
     }
@@ -291,9 +300,8 @@ public class TaskManagementService {
             return new Response("Comment Not Present" , true);
         }
 
-        Comment com = new Comment();
-        com.setComment(commentMessage);
-        commentRepository.save(com);
+        comment.setComment(commentMessage);
+        commentRepository.save(comment);
         return new Response("Updated Successfully" , true);
     }
 

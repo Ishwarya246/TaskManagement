@@ -132,7 +132,7 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/update_comment")
+    @PatchMapping("/update_comment")
     public ResponseEntity<Response> updateComment(@RequestParam("taskId") Long taskId, @RequestParam("commentId") Long commentId, @RequestParam("userId") Long userId, @RequestParam("newComment") String commentMessage) {
         Response response = TaskManagementService.updateComment(taskId, commentId, userId, commentMessage);
         return new ResponseEntity<>(response, HttpStatus.OK);
