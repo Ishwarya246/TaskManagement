@@ -90,13 +90,13 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/update_status/{task_id}")
+    @PatchMapping("/update_status/{task_id}")
     public ResponseEntity<Response> updateStatus(@RequestParam("status") String status, @PathVariable("task_id") Long taskId) {
         Response response = TaskManagementService.updateStatus(taskId, status);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/change_priority/{task_id}")
+    @PatchMapping("/change_priority/{task_id}")
     public ResponseEntity<Response> updatePriority(@RequestParam("priority") Integer priority, @PathVariable("task_id") Long taskId) {
         Response response = TaskManagementService.updatePriority(taskId, priority);
         return new ResponseEntity<>(response, HttpStatus.OK);
