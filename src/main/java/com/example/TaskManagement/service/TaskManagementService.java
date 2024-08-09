@@ -124,6 +124,10 @@ public class TaskManagementService {
         if (task.isEmpty()) {
             return new Response("Task Not Present" , true);
         }
+        List<UserTaskMapping> userTaskMapping = userTaskMappingRepository.findAllByTaskId(taskId);
+        if (userTaskMapping != null) {
+            userTaskMappingRepository.deleteAll(userTaskMapping);
+        }
         taskRepository.delete(task.get());
         return new Response("Deleted Successfully" , true);
     }

@@ -10,4 +10,5 @@ public interface UserTaskMappingRepository extends JpaRepository<UserTaskMapping
 
     Optional<UserTaskMapping> findByUserIdAndTaskId(Long userId, Long taskId);
     List<UserTaskMapping> findAllByAssigneeId(Long assigneeId);
+    List<UserTaskMapping> findAllByTaskId(Long taskId);
 }

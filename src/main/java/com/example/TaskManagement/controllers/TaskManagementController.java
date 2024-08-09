@@ -74,7 +74,6 @@ public class TaskManagementController {
 
     @DeleteMapping("/delete_task")
     public ResponseEntity<Response> deleteTask(@RequestParam("taskId") Long taskId) {
-        System.out.println("111111111111111111111111111111");
         Response response = TaskManagementService.deleteTask(taskId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -121,8 +120,8 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete_tag/{task_id}")
-    public ResponseEntity<Response> deleteTag(@PathVariable("task_id") Long taskId) {
+    @DeleteMapping("/delete_all_tags/{task_id}")
+    public ResponseEntity<Response> deleteTags(@PathVariable("task_id") Long taskId) {
         Response response = TaskManagementService.deleteTags(taskId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
