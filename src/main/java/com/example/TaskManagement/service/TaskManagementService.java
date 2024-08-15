@@ -5,6 +5,7 @@ import com.example.TaskManagement.models.*;
 import com.example.TaskManagement.repositories.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,14 +22,18 @@ public class TaskManagementService {
     public static UserTaskMappingRepository userTaskMappingRepository = null;
     public static TagRepository tagRepository = null;
     public static CommentRepository commentRepository = null;
+    public static ActivityLogRepository activityLogRepository = null;
+    public static MongoTemplate mongoTemplate = null;
 
     @Autowired
-    public TaskManagementService(UserRepository userRepository, TaskRepository taskRepository, UserTaskMappingRepository userTaskMappingRepository, TagRepository tagRepository, CommentRepository commentRepository) {
+    public TaskManagementService(UserRepository userRepository, TaskRepository taskRepository, UserTaskMappingRepository userTaskMappingRepository, TagRepository tagRepository, CommentRepository commentRepository, ActivityLogRepository activityLogRepository, MongoTemplate mongoTemplate ) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
         this.userTaskMappingRepository = userTaskMappingRepository;
         this.tagRepository = tagRepository;
         this.commentRepository = commentRepository;
+        this.activityLogRepository = activityLogRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public static Response addUser(String name, String email, String password) {

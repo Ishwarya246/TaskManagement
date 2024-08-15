@@ -1,10 +1,8 @@
 package com.example.TaskManagement.controllers;
 
 import com.example.TaskManagement.dto.Response;
-import com.example.TaskManagement.models.Comment;
-import com.example.TaskManagement.models.Tag;
-import com.example.TaskManagement.models.Task;
-import com.example.TaskManagement.models.User;
+import com.example.TaskManagement.models.*;
+import com.example.TaskManagement.repositories.ActivityLogRepository;
 import com.example.TaskManagement.service.TaskManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +16,12 @@ import java.util.List;
 public class TaskManagementController {
 
     public final TaskManagementService taskManagementService;
+    private final ActivityLogRepository activityLogRepository;
 
     @Autowired
-    public TaskManagementController(TaskManagementService taskManagementService) {
+    public TaskManagementController(TaskManagementService taskManagementService, ActivityLogRepository activityLogRepository) {
         this.taskManagementService = taskManagementService;
+        this.activityLogRepository = activityLogRepository;
     }
 
     @PostMapping("/home")
@@ -144,10 +144,16 @@ public class TaskManagementController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("fetch_comments/{taskId}")
+    @GetMapping("/fetch_comments/{taskId}")
     public ResponseEntity<List<Comment>> fetchComments(@PathVariable("taskId") Long taskId) {
         List<Comment> response = TaskManagementService.fetchComments(taskId);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("add_mongo_event")
+    public ActivityLog addMongoEvent(@RequestBody(required = true) ActivityLog activityLog) {
+        return activityLogRepository.save(activityLog);
+//        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
